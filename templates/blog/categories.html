@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load comments_extras %}
+
+{% block main %}
+{% for category in category_list %}
+<article class="category category-{{ category.pk }}">
+    <header class="entry-header">
+        <h1 class="entry-title">
+            <a href="{% url 'blog:category' category.pk %}">{{ category.name }}</a>
+        </h1>
+        <div class="entry-meta">
+            <a>文章数量：</a><span class="category-post"><a href="">{{ category.post_set.count }}</a></span>
+        </div>
+    </header>
+</article>
+{% empty %}
+    <div class="no-category">暂时还没有分类！</div>
+{% endfor %}
+
+                <!-- 简单分页效果
+                <div class="pagination-simple">
+                    <a href="#">上一页</a>
+                    <span class="current">第 6 页 / 共 11 页</span>
+                    <a href="#">下一页</a>
+                </div>
+                -->
+                <div class="pagination">
+                    <ul>
+                        <li><a href="">1</a></li>
+                        <li><a href="">...</a></li>
+                        <li><a href="">4</a></li>
+                        <li><a href="">5</a></li>
+                        <li class="current"><a href="">6</a></li>
+                        <li><a href="">7</a></li>
+                        <li><a href="">8</a></li>
+                        <li><a href="">...</a></li>
+                        <li><a href="">11</a></li>
+                    </ul>
+                </div>
+                {% endblock main %}
