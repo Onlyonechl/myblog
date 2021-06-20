@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==3.2.4"
+markdown = "*"
+gunicorn = "*"
+importlib-metadata = "*"
+pytz = "*"
+pip = "*"
+setuptools = "*"
+sqlparse = "*"
+typing-extensions = "*"
+wheel = "*"
+zipp = "*"
+supervisor = "*"
+faker = "*"
+django-pure-pagination = "*"
+setuptools-scm = "*"
+django-haystack = "*"
+elasticsearch = "==2"
+
+[dev-packages]
+pylint = "*"
+
+[requires]
+python_version = "3.9"

@@ -5,7 +5,7 @@ import sys
 
 
 def main():
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myblog.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings.local')  # manage.py只在本地环境运行，加载local配置
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

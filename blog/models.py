@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
+from django.utils.functional import cached_property
+import markdown, re
 
 class Category(models.Model):
     """
@@ -83,6 +87,11 @@ class Post(models.Model):
     # Category 类似。
     author = models.ForeignKey(User, verbose_name='作者', on_delete=models.CASCADE)
 
+    # 新增 views 字段记录文章阅读量
+    # 注意 views 字段的类型为 PositiveIntegerField，该类型的值只允许为正整数或 0，因为阅读量不可能为负值。
+    # 初始化时 views 的值为 0。将 editable 参数设为 False 将不允许通过 django admin 后台编辑此字段的内容。因为阅读量应该根据被访问次数统计，而不应该人为修改。
+    views = models.PositiveIntegerField(default=0, editable=False)
+
     class Meta:
         verbose_name = '文章'
         verbose_name_plural = verbose_name
@@ -97,3 +106,35 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('blog:detail', kwargs={'pk':self.pk})
 
+    # 一旦用户访问了某篇文章，这时就应该将 views 的值 +1，这个过程最好由 Post 模型自己来完成，因此再给模型添加一个自定义的方法：
+    # increase_views 方法首先将自身对应的 views 字段的值 +1（此时数据库中的值还没变），然后调用 save 方法将更改后的值保存到数据库。
+    # 注意这里使用了 update_fields 参数来告诉 Django 只更新数据库中 views 字段的值，以提高效率。
+    def increase_views(self):
+        self.views += 1
+        self.save(update_fields=['views'])
+
+    @property  #property 装饰器可以将方法转为属性，这样就能够以属性访问的方式获取方法返回的值
+    def toc(self):
+        return self.rich_content.get("toc", "")
+
+    @property
+    def body_html(self):
+        return self.rich_content.get("content", "")
+
+    @cached_property #cached_property功能和property类似，但可以进一步提供缓存功能，它将被装饰方法调用返回的值缓存起来，下次访问时将直接读取缓存内容，而不需重复执行方法获取返回结果。
+    def rich_content(self):
+        return generate_rich_content(self.body)
+
+
+def generate_rich_content(value):
+    md = markdown.Markdown(
+        extensions=[
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
+            TocExtension(slugify=slugify),
+        ]
+    )
+    content = md.convert(value)
+    m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+    toc = m.group(1) if m is not None else ""
+    return {"content": content, "toc": toc}

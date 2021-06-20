@@ -11,11 +11,11 @@
                                                         datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
               <span class="post-author"><a href="#">{{ post.author }}</a></span>
               <span class="comments-link"><a href="#comment-area">{{ post.comment_set.count }} 评论</a></span>
-              <span class="views-count"><a href="{{ post.get_absolute_url }}">588 阅读</a></span>
+              <span class="views-count"><a href="{{ post.get_absolute_url }}">{{ post.views }}阅读</a></span>
             </div>
         </header>
         <div class="entry-content clearfix">
-            {{ post.body|safe }}
+            {{ post.body_html|safe }}
         </div>
     </article>
 
@@ -31,26 +31,15 @@
 {% endblock main %}
 
 {% block toc %}
-    <div class="widget widget-content">
-        <h3 class="widget-title">文章目录</h3>
-        <ul>
-            <li>
-                <a href="#">教程特点</a>
-            </li>
-            <li>
-                <a href="#">谁适合这个教程</a>
-            </li>
-            <li>
-                <a href="#">在线预览</a>
-            </li>
-            <li>
-                <a href="#">资源列表</a>
-            </li>
-            <li>
-                <a href="#">获取帮助</a>
-            </li>
-        </ul>
-    </div>
-
+    {% if post.toc %} <!--模板标签 if用来做条件判断，和 Python 中的 if 条件判断是类似的。-->
+        <div class="widget widget-content">
+            <h3 class="widget-title">文章目录</h3>
+            <div class="toc">
+                <ul>
+                    {{ post.toc|safe }} <!-- 注意 post.toc 实际是一段 HTML 代码，我们知道 django 会对模板中的 HTML 代码进行转义，所以要使用 safe 标签防止 django 对其转义。-->
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 {% endblock toc %}
 

@@ -1,0 +1,49 @@
+version: '3'
+
+volumes:
+  # database_local:
+  esdata_local:
+
+services:
+  myblog_local:
+    build:
+      context: .
+      dockerfile: compose/local/django/Dockerfile
+    image: myblog_local
+    container_name: myblog_local
+    working_dir: /app
+    volumes:
+      #- database_local:/app/database.  由于整个项目都挂载了，注意这里不需要再挂载database了
+      - .:/app   #将整个项目根目录下的文件挂载到了 /app 目录下，这样容器内就能实时反映代码的修改了
+    ports:
+      - "8001:8001"
+    command: /start.sh
+    depends_on:
+      - elasticsearch_local
+
+  elasticsearch_local:
+    build:
+      context: .
+      dockerfile: ./compose/local/elasticsearch/Dockerfile
+    image: elasticsearch_local
+    container_name: elasticsearch_local
+    volumes:
+      - esdata_local:/usr/share/elasticsearch_local/data
+    ports:
+      - "9201:9201"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+   #ulimits:
+   #  memlock:
+   #    soft: -1
+   #    hard: -1
+   #  nproc: 65536
+   #  nofile:
+   #    soft: 65536
+   #    hard: 65536
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 4G
