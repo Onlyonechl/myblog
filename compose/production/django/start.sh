@@ -2,4 +2,4 @@
 
 python manage.py migrate
 python manage.py collectstatic --noinput
-gunicorn project.wsgi:application -w 4 -k gthread -b 0.0.0.0:8000 --chdir=/app
+gunicorn project.wsgi:application -w 4 -k gthread -b 0.0.0.0 --chdir=/app

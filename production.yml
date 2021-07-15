@@ -21,7 +21,7 @@ services:
     ports:
       - "8000:8000"
     command: /start.sh
-    depends_on:
+    depends_on: #依赖 需要先启动elasticsearch
       - elasticsearch
 
   nginx:
@@ -35,9 +35,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on: #依赖 需要先启动myblog
+      - myblog
 
-
-  
   elasticsearch:
     build:
       context: .
