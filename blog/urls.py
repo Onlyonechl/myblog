@@ -14,5 +14,8 @@ urlpatterns = [
     path('categories/<int:pk>/', views.CategoryView.as_view(), name='category'), #在 URL 配置中把 category 视图替换成类视图 CategoryView
     path('tags/<int:pk>/', views.tag, name='tag'),
     path('categories', views.categories, name='categories'),
-    #path('search/', views.search, name='search'),
+    # path('search/', views.search, name='search'),
+    # path('api/index/', views.index),
+    #path('api/index/', views.IndexPostListAPIView.as_view()),
+    path("api/index/", views.index),
 ]

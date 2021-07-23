@@ -21,6 +21,8 @@ django-pure-pagination = "*"
 setuptools-scm = "*"
 django-haystack = "*"
 elasticsearch = "==2"
+djangorestframework = "*"
+django-filter = "*"
 
 [dev-packages]
 pylint = "*"

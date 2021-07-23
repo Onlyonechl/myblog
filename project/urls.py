@@ -20,6 +20,11 @@ from django.conf import settings ##新增
 from django.conf.urls import url ##新增
 from blog.feeds import AllPostsRssFeed
 
+from blog.views import PostViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'posts', PostViewSet, basename='post')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +34,6 @@ urlpatterns = [
       {'document_root': settings.STATIC_ROOT}, name='static'), ##新增
     path('all/rss/', AllPostsRssFeed(), name='rss'),
     path('search/', include('haystack.urls')),
+    path("api/", include(router.urls)),
+    path("api/auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]
