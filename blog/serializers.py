@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Post, Category, Tag
+from drf_haystack.serializers import HaystackSerializerMixin
+from rest_framework.fields import CharField
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,25 +44,6 @@ class TagSerializer(serializers.ModelSerializer):
             "name",
         ]
 
-class PostRetrieveSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-    author = UserSerializer()
-    tags = TagSerializer(many=True)
-
-    class Meta:
-        model = Post
-        fields = [
-            "id",
-            "title",
-            "body",
-            "created_time",
-            "modified_time",
-            "excerpt",
-            "views",
-            "category",
-            "author",
-            "tags",
-        ]
 
 class PostRetrieveSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
@@ -84,4 +67,35 @@ class PostRetrieveSerializer(serializers.ModelSerializer):
             "tags",
             "toc",
             "body_html",
+        ]
+
+class HighlightedCharField(CharField):
+    def to_representation(self, value):
+        value = super().to_representation(value)
+        request = self.context["request"]
+        query = request.query_params["text"]
+        highlighter = Highlighter(query)
+        return highlighter.highlight(value)
+
+class PostHaystackSerializer(HaystackSerializerMixin, PostListSerializer):
+    title = HighlightedCharField(
+        label="标题", help_text="标题中包含的关键词已由 HTML 标签包裹，并添加了 class，前端可设置相应的样式来高亮关键。"
+    )
+    summary = HighlightedCharField(
+        source="body",
+        label="摘要",
+        help_text="摘要中包含的关键词已由 HTML 标签包裹，并添加了 class，前端可设置相应的样式来高亮关键。",
+    )
+
+    class Meta(PostListSerializer.Meta):
+        search_fields = ["text"]
+        fields = [
+            "id",
+            "title",
+            "summary",
+            "created_time",
+            "excerpt",
+            "category",
+            "author",
+            "views",
         ]

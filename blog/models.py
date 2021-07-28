@@ -7,6 +7,12 @@ from markdown.extensions.toc import TocExtension
 from django.utils.functional import cached_property
 import markdown, re
 
+from django.core.cache import cache
+from django.db.models.signals import post_delete, post_save
+from datetime import datetime
+
+
+
 class Category(models.Model):
     """
     django 要求模型必须继承 models.Model 类。
@@ -138,3 +144,11 @@ def generate_rich_content(value):
     m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
     toc = m.group(1) if m is not None else ""
     return {"content": content, "toc": toc}
+
+
+
+def change_post_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set("post_updated_at", datetime.utcnow())
+
+post_save.connect(receiver=change_post_updated_at, sender=Post)
+post_delete.connect(receiver=change_post_updated_at, sender=Post)

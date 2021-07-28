@@ -1,5 +1,5 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 verify_ssl = true
 name = "pypi"
 
@@ -23,9 +23,12 @@ django-haystack = "*"
 elasticsearch = "==2"
 djangorestframework = "*"
 django-filter = "*"
+drf-haystack = "*"
+django-redis-cache = "*"
+drf-extensions = "*"
 
 [dev-packages]
 pylint = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3"

@@ -4,6 +4,7 @@ volumes:
   static:
   database:
   esdata:
+  redis_data:
 
 services:
   myblog:
@@ -21,8 +22,9 @@ services:
     ports:
       - "8000:8000"
     command: /start.sh
-    depends_on: #依赖 需要先启动elasticsearch
+    depends_on: #依赖 需要先启动elasticsearch和redis
       - elasticsearch
+      - redis
 
   nginx:
     build:
@@ -64,3 +66,13 @@ services:
           memory: 8G
         reservations:
           memory: 4G
+
+  redis:
+    image: 'bitnami/redis:5.0'
+    container_name: redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis/data'
+    env_file:
+      - .envs/.production

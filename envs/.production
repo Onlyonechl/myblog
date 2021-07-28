@@ -1,1 +1,2 @@
 DJANGO_SECRET_KEY='fbk-%eyzq+bh)$56o2$txpw@i=3p0(#d^w=p*m-%_u6b$a&4#%'
+REDIS_PASSWORD=055EDy65AAhLgBxMp1u1

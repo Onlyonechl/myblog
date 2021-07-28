@@ -13,3 +13,12 @@ ALLOWED_HOSTS = ['www.onlyone.center', '.onlyone.center','*']
 
 # elasticsearch 服务的 url 地址是不同的，所以我们在 common 的配置中没有指定 url，在 local.py 设置文件指定之：
 HAYSTACK_CONNECTIONS['default']['URL'] = 'http://elasticsearch_local:9200/'
+# 本地不开启实时搜索
+# HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 开启本地内存作为缓存服务
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}

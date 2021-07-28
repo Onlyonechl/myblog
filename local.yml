@@ -3,6 +3,7 @@ version: '3'
 volumes:
   # database_local:
   esdata_local:
+  redis_data_local:
 
 services:
   myblog_local:
@@ -21,6 +22,7 @@ services:
     command: /start.sh
     depends_on:
       - elasticsearch_local
+      - redis_local
 
   elasticsearch_local:
     build:
@@ -48,3 +50,13 @@ services:
           memory: 8G
         reservations:
           memory: 4G
+  
+  redis:
+    image: 'bitnami/redis:5.0'
+    container_name: redis_local
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redis_data:/bitnami/redis_local/data'
+    env_file:
+      - .envs/.local
